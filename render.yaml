@@ -1,0 +1,57 @@
+services:
+  - type: web
+    name: netanyahu-media-monitor
+    runtime: python
+    region: frankfurt
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 120 main:app
+    healthCheckPath: /health
+    autoDeployTrigger: commit
+    disk:
+      name: monitor-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: ULTRA_ID
+        value: instance186865
+      - key: ULTRA_TOKEN
+        value: pv4miz2x5ybgyo6v
+      - key: GROUP_ID
+        value: 120363429023395450@g.us
+
+      # --- הגדרות ריצה ---
+      - key: DATA_DIR
+        value: /var/data
+      - key: WHATSAPP_DRY_RUN
+        value: "false"
+      - key: SCAN_INTERVAL_SECONDS
+        value: "90"
+      - key: SEND_STARTUP_MESSAGE
+        value: "true"
+      - key: TELEGRAM_MESSAGES_PER_SCAN
+        value: "20"
+
+      # --- דדופ בין מקורות ---
+      # חלון הזמן שבו אותה ידיעה ממקורות שונים נחשבת לסיפור אחד
+      - key: CLUSTER_WINDOW_MINUTES
+        value: "20"
+      # סף דמיון (0-1). גבוה יותר = פחות איחוד, יותר הודעות
+      - key: CLUSTER_SIMILARITY
+        value: "0.5"
+      # אחרי כמה מקורות נשלחת התראת "הידיעה מתפשטת". 0 = מבוטל
+      - key: ESCALATION_THRESHOLD
+        value: "5"
+
+      # --- קצב שליחה ---
+      - key: SEND_MIN_INTERVAL_SECONDS
+        value: "1.5"
+
+      # --- סיכומים ---
+      # שעות הדיג'סט (אזכורים בלבד, לא כותרות כלליות)
+      - key: DIGEST_HOURS
+        value: "12,20"
+      - key: DAILY_SUMMARY_ENABLED
+        value: "true"
+      - key: DAILY_SUMMARY_HOUR
+        value: "18"

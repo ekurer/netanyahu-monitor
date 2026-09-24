@@ -1,0 +1,7 @@
+# Reconstructed from archived imports and Render start command.
+beautifulsoup4
+feedparser
+Flask
+gunicorn
+pytz
+requests
